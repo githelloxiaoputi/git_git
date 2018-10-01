@@ -1,0 +1,57 @@
+1.	centos7环境（其他可参照官网进行安装）
+2.	安装必要依赖：
+	sudo yum install -y curl policycoreutils-python openssh-server
+3.	设置sshd开机启动并开启
+	sudo systemctl enable sshd
+	sudo systemctl start sshd
+4.	防火墙添加http协议服务并重新加载防火墙
+	sudo firewall-cmd --permanent --add-service=http
+	sudo systemctl reload firewalld
+5.	设置邮箱服务并设置开机启动和开启（可以操作也可以不操作）
+	sudo yum install postfix postfix-devel
+	sudo systemctl enable postfix
+	sudo systemctl start postfix
+6.	安装gitlab-ce包（由于gitlab提供的是在github上的所以安装是网速不行，这里配置一个清华大学的yum源，并进行使用yum源安装）
+	1. 在/etc/yum.repos.d下新建文件gitlab-ce.repo
+	2. 将下列文本输入即可：
+		[gitlab-ce]
+		name=Gitlab CE Repository
+		baseurl=https://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/yum/el$releasever/
+		gpgcheck=0
+		enabled=1
+	3. 执行sudo yum makecache
+	4. yum install gitlab-ce
+7.	启动gitlab服务
+	sudo gitlab-ctl reconfigure
+8.	sudo gitlab-ctl start
+9.	更改端口：默认80 改为 90	一定要记得防火墙对应的端口要打开，否则只会一直纠结踩坑
+	修改文件：	/var/opt/gitlab/nginx/conf/gitlab-http.conf		把listen *:80 改为 listen *:90
+	修改文件：	/etc/gitlab/gitlab.rb  改external_url ‘http://[ip|域名]:90’   
+	最后重启服务
+
+----------gitlab常用指令-----------
+
+gitlab-ctl start		开启gitlab
+gitlab-ctl stop			关闭gitlab
+gitlab-ctl restart		重启gitlab
+gitlab-ctl status		查看gitlab状态
+gitlab-ctl reconfigure	启动gitlab服务
+vi /etc/gitlab/gitlab.rb	gitlab配置文件
+vi /var/opt/gitlab/nginx/conf/gitlab-http.conf	gitlab下nginx配置服务
+vi /var/log/gitlab/nginx/gitlab_access.log	gitlab访问成功日志
+vi /var/log/gitlab/nginx/gitlab_error.log	gitlab访问失败日志
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
